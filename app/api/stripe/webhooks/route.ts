@@ -7,7 +7,7 @@ const relevantEvents = new Set(["checkout.session.completed", "customer.subscrip
 
 export async function POST(req: Request) {
   const body = await req.text();
-  const sig = (await headers()).get("Stripe-Signature");
+  const sig = (await headers()).get("Stripe-Signature") as string;
   const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
   let event: Stripe.Event;
 
