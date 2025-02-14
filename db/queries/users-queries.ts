@@ -12,7 +12,7 @@ export const createUser = async (data: InsertUser) => {
   }
 };
 
-export const getProfileByUserId = async (userId: string) => {
+export const getUserByUserId = async (userId: string) => {
   try {
     const user = await db.query.users.findFirst({
       where: eq(usersTable.userId, userId)
