@@ -22,10 +22,15 @@ export async function POST(req: Request) {
     }
 
     event = stripe.webhooks.constructEvent(body, sig, webhookSecret);
-  } catch (err: any) {
-    console.error(`Webhook Error: ${err.message}`);
-    return new Response(`Webhook Error: ${err.message}`, { status: 400 });
+} catch (err: unknown) {
+    let errorMessage = "An unknown error occurred";
+    if (err instanceof Error) {
+      errorMessage = err.message;
+    }
+    console.error(`Webhook Error: ${errorMessage}`);
+    return new Response(`Webhook Error: ${errorMessage}`, { status: 400 });
   }
+  
 
   if (relevantEvents.has(event.type)) {
     try {
