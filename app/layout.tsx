@@ -5,7 +5,7 @@ import { Providers } from "@/components/utilities/providers";
 import { Toaster } from "@/components/ui/toaster";
 import { ClerkProvider } from "@clerk/nextjs";
 import { auth, currentUser } from "@clerk/nextjs/server";
-import { createUser, getUserByUserId } from "@/db/queries/users-queries";
+import { createUserAction, getUserByUserIdAction } from "@/actions/users-actions";
 import Header from "@/components/header";
 
 const geistSans = Geist({
@@ -33,9 +33,9 @@ export default async function RootLayout({
 
   // TODO: review this logic to make sure it makes sense
   if (userId) {
-    const user = await getUserByUserId(userId)
-    if (!user) {
-      await createUser({
+    const user = await getUserByUserIdAction(userId)
+    if (!user.data) {
+      await createUserAction({
         userId,
         email: userAuth?.emailAddresses[0].emailAddress || "",
         username: userAuth?.username || userAuth?.firstName || userId,
