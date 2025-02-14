@@ -5,7 +5,7 @@ export const membershipEnum = pgEnum("membership", ["free", "pro"]);
 export const usersTable = pgTable("users", {
   userId: text("user_id").primaryKey().notNull(),
   email: text("email").notNull(),
-  username: text("username").notNull(),
+  username: text("username").notNull().unique(),
   status: text({ enum: ["active", "inactive", "banned"] }).default("active").notNull(),
   stripeCustomerId: text("stripe_customer_id"),
   stripeSubscriptionId: text("stripe_subscription_id"),
