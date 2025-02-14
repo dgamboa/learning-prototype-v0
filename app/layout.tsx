@@ -6,6 +6,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { ClerkProvider } from "@clerk/nextjs";
 import { auth, currentUser } from "@clerk/nextjs/server";
 import { createUser, getUserByUserId } from "@/db/queries/users-queries";
+import Header from "@/components/header";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -30,6 +31,7 @@ export default async function RootLayout({
   const { userId } = await auth()
   const userAuth = await currentUser()
 
+  // TODO: review this logic to make sure it makes sense
   if (userId) {
     const user = await getUserByUserId(userId)
     if (!user) {
@@ -39,21 +41,22 @@ export default async function RootLayout({
         username: userAuth?.username || userAuth?.firstName || userId,
       })
     }
-    return (
-      <ClerkProvider>
-        <html lang="en">
-          <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-            <Providers
-              attribute="class"
-              defaultTheme="system"
-              disableTransitionOnChange
-            >
-              {children}
-              <Toaster />
-            </Providers>
-          </body>
-        </html>
-      </ClerkProvider>
-    );
   }
+  return (
+    <ClerkProvider>
+      <html lang="en" suppressHydrationWarning>
+        <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+          <Providers
+            attribute="class"
+            defaultTheme="system"
+            disableTransitionOnChange
+          >
+            <Header />
+            {children}
+            <Toaster />
+          </Providers>
+        </body>
+      </html>
+    </ClerkProvider>
+  );
 }
