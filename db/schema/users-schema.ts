@@ -6,6 +6,7 @@ export const usersTable = pgTable("users", {
   userId: text("user_id").primaryKey().notNull(),
   email: text("email").notNull(),
   username: text("username").notNull().unique(),
+  membership: membershipEnum("membership").default("free").notNull(),
   status: text({ enum: ["active", "inactive", "banned"] }).default("active").notNull(),
   stripeCustomerId: text("stripe_customer_id"),
   stripeSubscriptionId: text("stripe_subscription_id"),

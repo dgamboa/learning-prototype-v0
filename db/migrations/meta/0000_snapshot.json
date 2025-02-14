@@ -1,5 +1,5 @@
 {
-  "id": "97df8a8d-fe5e-440c-a1fc-1ba560ae1e0b",
+  "id": "8a8bd77c-0b16-4f44-8cc4-f2f826010ed3",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -25,6 +25,14 @@
           "type": "text",
           "primaryKey": false,
           "notNull": true
+        },
+        "membership": {
+          "name": "membership",
+          "type": "membership",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'free'"
         },
         "status": {
           "name": "status",
