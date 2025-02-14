@@ -7,5 +7,6 @@ CREATE TABLE "users" (
 	"stripe_customer_id" text,
 	"stripe_subscription_id" text,
 	"created_at" timestamp DEFAULT now() NOT NULL,
-	"updated_at" timestamp DEFAULT now() NOT NULL
+	"updated_at" timestamp DEFAULT now() NOT NULL,
+	CONSTRAINT "users_username_unique" UNIQUE("username")
 );

@@ -37,22 +37,23 @@ export default async function RootLayout({
         userId,
         email: userAuth?.emailAddresses[0].emailAddress || "",
         username: userAuth?.username || userAuth?.firstName || userId,
-    })
+      })
+    }
+    return (
+      <ClerkProvider>
+        <html lang="en">
+          <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+            <Providers
+              attribute="class"
+              defaultTheme="system"
+              disableTransitionOnChange
+            >
+              {children}
+              <Toaster />
+            </Providers>
+          </body>
+        </html>
+      </ClerkProvider>
+    );
   }
-  return (
-    <ClerkProvider>
-      <html lang="en">
-        <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-          <Providers
-          attribute="class"
-          defaultTheme="system"
-          disableTransitionOnChange
-        >
-          {children}
-          <Toaster />
-          </Providers>
-        </body>
-      </html>
-    </ClerkProvider>
-  );
 }
