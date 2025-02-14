@@ -3,6 +3,10 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Providers } from "@/components/utilities/providers";
 import { Toaster } from "@/components/ui/toaster";
+import { ClerkProvider } from "@clerk/nextjs";
+import { auth, currentUser } from "@clerk/nextjs/server";
+import { createUser, getUserByUserId } from "@/db/queries/users-queries";
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -18,23 +22,37 @@ export const metadata: Metadata = {
   description: "A learning prototype for a new startup",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const { userId } = await auth()
+  const userAuth = await currentUser()
+
+  if (userId) {
+    const user = await getUserByUserId(userId)
+    if (!user) {
+      await createUser({
+        userId,
+        email: userAuth?.emailAddresses[0].emailAddress || "",
+        username: userAuth?.username || userAuth?.firstName || userId,
+    })
+  }
   return (
-    <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        <Providers
+    <ClerkProvider>
+      <html lang="en">
+        <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+          <Providers
           attribute="class"
           defaultTheme="system"
           disableTransitionOnChange
         >
           {children}
           <Toaster />
-        </Providers>
-      </body>
-    </html>
+          </Providers>
+        </body>
+      </html>
+    </ClerkProvider>
   );
 }
