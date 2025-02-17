@@ -13,16 +13,14 @@ export default function Header() {
     setIsMenuOpen(!isMenuOpen);
   };
 
-//   TODO: Update the layout & routes
-
   return (
     <header className="bg-primary text-primary-foreground shadow-md">
-      <div className="container mx-auto px-4 py-4 flex items-center justify-between">
+      <div className="container mx-auto flex items-center justify-between p-4">
         <div className="flex items-center space-x-2">
           <CheckSquare className="h-6 w-6" />
           <h1 className="text-xl font-bold">Learning Prototype</h1>
         </div>
-        <nav className="hidden md:flex space-x-4">
+        <nav className="absolute left-1/2 hidden -translate-x-1/2 space-x-4 md:flex">
           <Link
             href="/"
             className="hover:underline"
