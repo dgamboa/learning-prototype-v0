@@ -6,7 +6,6 @@ import { Toaster } from "@/components/ui/toaster";
 import { ClerkProvider } from "@clerk/nextjs";
 import { auth, currentUser } from "@clerk/nextjs/server";
 import { createUserAction, getUserByUserIdAction } from "@/actions/users-actions";
-import Header from "@/components/header";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
