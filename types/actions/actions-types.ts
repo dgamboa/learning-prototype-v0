@@ -1,5 +1,5 @@
-export type ActionState = {
-  status: "success" | "error";
+export type ActionState<T> = {
+  isSuccess: boolean;
   message: string;
-  data?: any;
+  data?: T;
 };

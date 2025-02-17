@@ -5,7 +5,7 @@ import { Providers } from "@/components/utilities/providers";
 import { Toaster } from "@/components/ui/toaster";
 import { ClerkProvider } from "@clerk/nextjs";
 import { auth, currentUser } from "@clerk/nextjs/server";
-import { createUserAction, getUserByUserIdAction } from "@/actions/users-actions";
+import { createUserAction, getUserByUserIdAction } from "@/actions/db/users-actions";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",

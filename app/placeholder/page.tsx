@@ -1,6 +1,6 @@
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
-import { getUserByUserIdAction } from "@/actions/users-actions";
+import { getUserByUserIdAction } from "@/actions/db/users-actions";
 
 export default async function PlaceholderPage() {
   const { userId } = await auth();
