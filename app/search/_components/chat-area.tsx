@@ -9,9 +9,10 @@ interface ChatAreaProps {
   initialSources?: SelectSource[]
   initialMessages?: SelectMessage[]
   chatId?: string
+  userId?: string
 }
 
-export default function ChatArea({ className, initialSources, initialMessages, chatId }: ChatAreaProps) {
+export default function ChatArea({ className, initialSources, initialMessages, chatId, userId }: ChatAreaProps) {
   return (
     <div className={`flex h-full flex-col ${className}`}>
       <div className="flex-1">
@@ -21,8 +22,8 @@ export default function ChatArea({ className, initialSources, initialMessages, c
           </div>
           <div className="w-full max-w-md px-4">
             <div className="relative">
-              <Input 
-                placeholder="Search..." 
+              <Input
+                placeholder="Search..."
                 className="pr-10"
               />
               <Search className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />

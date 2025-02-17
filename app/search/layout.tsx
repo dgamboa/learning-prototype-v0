@@ -16,7 +16,7 @@ export default async function SearchLayout({
   const { userId } = await auth()
   
   if (!userId) {
-    return redirect("/login")
+    throw new Error("User not authenticated")
   }
 
   const user = await getUserByUserIdAction(userId)
