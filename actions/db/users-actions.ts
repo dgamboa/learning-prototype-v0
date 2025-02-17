@@ -48,7 +48,7 @@ export async function updateUserAction(userId: string, data: Partial<InsertUser>
   }
 }
 
-export async function deleteUserAction(userId: string): Promise<ActionState<SelectUser>> {
+export async function deleteUserAction(userId: string): Promise<ActionState<SelectUser | undefined>> {
   try {
     await deleteUser(userId);
     revalidatePath("/users");
