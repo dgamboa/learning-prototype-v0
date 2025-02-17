@@ -1,7 +1,25 @@
-export default function Home() {
+"use server"
+
+import { Button } from "@/components/ui/button"
+import { SignedIn, SignedOut } from "@clerk/nextjs"
+import Link from "next/link"
+
+export default async function HomePage() {
   return (
-    <div>
-      <h1>Hello World!</h1>
-    </div>
-  );
+    <main className="flex min-h-screen flex-col items-center gap-4 p-24">
+      <SignedIn>
+        <div>Welcome to Andes</div>
+        <Link href="/search">
+          <Button>Start Searching &rarr;</Button>
+        </Link>
+      </SignedIn>
+
+      <SignedOut>
+        <div>Please login to start learning!</div>
+        <Link href="/login">
+          <Button>Login</Button>
+        </Link>
+      </SignedOut>
+    </main>
+  )
 }

@@ -34,7 +34,7 @@ export default function Header() {
               href="/placeholder"
               className="hover:underline"
             >
-              Placeholder
+              Search
             </Link>
           </SignedIn>
         </nav>
@@ -76,7 +76,7 @@ export default function Header() {
                   className="block hover:underline"
                   onClick={toggleMenu}
                 >
-                  Placeholder
+                  Search
                 </Link>
               </li>
             </SignedIn>

@@ -51,7 +51,6 @@ export default async function RootLayout({
             defaultTheme="system"
             disableTransitionOnChange
           >
-            <Header />
             {children}
             <Toaster />
           </Providers>
