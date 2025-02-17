@@ -8,9 +8,10 @@ interface ChatAreaProps {
   className?: string
   initialSources?: SelectSource[]
   initialMessages?: SelectMessage[]
+  chatId?: string
 }
 
-export default function ChatArea({ className, initialSources, initialMessages }: ChatAreaProps) {
+export default function ChatArea({ className, initialSources, initialMessages, chatId }: ChatAreaProps) {
   return (
     <div className={`flex h-full flex-col ${className}`}>
       <div className="flex-1">
@@ -28,21 +29,6 @@ export default function ChatArea({ className, initialSources, initialMessages }:
             </div>
           </div>
         </div>
-      </div>
-
-      <div className="p-4 border-t">
-        <form className="flex gap-2">
-          <Input 
-            placeholder="Ask anything..." 
-            className="flex-1"
-          />
-          <button 
-            type="submit"
-            className="px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90"
-          >
-            Send
-          </button>
-        </form>
       </div>
     </div>
   )

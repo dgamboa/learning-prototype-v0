@@ -25,7 +25,7 @@ export default async function SearchLayout({
     return redirect("/signup")
   }
 
-  if (user.membership === "free") {
+  if (user.data?.membership === "free") {
     return redirect("/pricing")
   }
   

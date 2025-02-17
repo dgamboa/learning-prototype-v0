@@ -5,6 +5,8 @@ import { createChatAction, deleteChatAction } from "@/actions/db/chats-actions"
 import { Button } from "@/components/ui/button"
 import { Plus, Trash2 } from "lucide-react"
 import { useState } from "react"
+import Link from "next/link"
+import { usePathname } from "next/navigation"
 
 interface SidebarProps {
     initialChats: SelectChat[]
@@ -13,6 +15,8 @@ interface SidebarProps {
 
 export default function Sidebar({ initialChats, userId }: SidebarProps) {
     const [chats, setChats] = useState(initialChats)
+    const pathname = usePathname()
+
     const handleNewSearch = async () => {
         const result = await createChatAction(userId, "New Search")
         if (result.isSuccess && result.data) {
@@ -42,10 +46,14 @@ export default function Sidebar({ initialChats, userId }: SidebarProps) {
             <h2 className="text-lg font-semibold">Library</h2>
             {chats.map((chat) => (
                 <div 
-                    key={chat.id} 
-                    className="group mb-2 flex items-center justify-between rounded-lg p-2 hover:bg-muted/50"
+                    key={chat.id}
+                    className={`group mb-2 flex items-center justify-between rounded-lg p-2 hover:bg-muted/50 ${
+                        pathname === `/search/${chat.id}` ? "bg-muted/50" : ""
+                    }`}
                 >
-                    <span className="text-neutral-500">{chat.name}</span>
+                    <Link href={`/search/${chat.id}`} className="flex-1">
+                        <span className="text-neutral-500">{chat.name}</span>
+                    </Link>
                     <Button
                         variant="ghost"
                         size="icon"
