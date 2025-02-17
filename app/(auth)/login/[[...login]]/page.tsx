@@ -10,7 +10,7 @@ export default function LoginPage() {
 //   TODO: Update the redirect route
   return (
     <SignIn
-      forceRedirectUrl="/placeholder"
+      forceRedirectUrl="/search"
       appearance={{ baseTheme: theme === "dark" ? dark : undefined }}
     />
   );

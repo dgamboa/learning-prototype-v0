@@ -10,7 +10,7 @@ export default function SignUpPage() {
 //   TODO: Update the redirect route
   return (
     <SignUp
-      forceRedirectUrl="/placeholder"
+      forceRedirectUrl="/search"
       appearance={{ baseTheme: theme === "dark" ? dark : undefined }}
     />
   );

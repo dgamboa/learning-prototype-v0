@@ -29,7 +29,7 @@ export default function Header() {
           </Link>
           <SignedIn>
             <Link
-              href="/placeholder"
+              href="/search"
               className="hover:underline"
             >
               Search
@@ -70,7 +70,7 @@ export default function Header() {
             <SignedIn>
               <li>
                 <Link
-                  href="/placeholder"
+                  href="/search"
                   className="block hover:underline"
                   onClick={toggleMenu}
                 >
