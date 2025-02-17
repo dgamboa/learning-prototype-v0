@@ -25,3 +25,12 @@ To run the project locally:
 3. Add a `.env.local` file that includes environment variables as specified by the team
 4. Run `npm run dev` to start the development server
 
+## Full Tech Stack
+
+- Frontend: Next.js, Tailwind CSS, Shadcn UI
+- Backend: Postgres, Supabase, Drizzle ORM
+- Auth: Clerk
+- Payments: Stripe
+- Analytics: PostHog
+- AI: OpenAI and Exa
+- Deployment: Vercel
