@@ -8,6 +8,13 @@
       "when": 1739556196012,
       "tag": "0000_unique_joseph",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1739820079026,
+      "tag": "0001_right_namor",
+      "breakpoints": true
     }
   ]
 }
