@@ -9,7 +9,7 @@ export default async function HomePage() {
     <main className="flex min-h-screen flex-col items-center gap-4 p-24">
       <SignedIn>
         <div>Welcome to Andes</div>
-        <Link href="/search">
+        <Link href="/placeholder">
           <Button>Start Searching &rarr;</Button>
         </Link>
       </SignedIn>
