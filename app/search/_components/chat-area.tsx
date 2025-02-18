@@ -7,12 +7,15 @@ import { useState, KeyboardEvent } from "react"
 import { searchExaAction } from "@/actions/exa-actions"
 import { generateOpenAIResponseAction } from "@/actions/openai-actions"
 import { readStreamableValue } from "ai/rsc"
+import { createChatAction } from "@/actions/db/chats-actions"
+import { createMessageAction } from "@/actions/db/messages-actions"
+import { createSourcesAction } from "@/actions/db/sources-actions"
 
 interface ChatAreaProps {
   className?: string
   initialSources?: SelectSource[]
   initialMessages?: SelectMessage[]
-  userId?: string
+  userId: string
 }
 
 export default function ChatArea({
@@ -108,6 +111,34 @@ export default function ChatArea({
     } catch (error) {
       console.error("Error generating full response:", error)
     }
+
+    if (isNewChat) {
+      const newChat = await createChatAction(userId, query.slice(0,50))
+      if (newChat.isSuccess) {
+        currentChatId = newChat.data?.id || ""
+        isNewChat = false
+      } else {
+        console.error("Error creating chat:", newChat.message)
+        return
+      } 
+    }
+
+    const userMessageResult = await createMessageAction({
+      chatId: currentChatId,
+      content: query,
+      role: "user",
+    })
+
+    const assistantMessageResult = await createMessageAction({
+      chatId: currentChatId,
+      content: fullContent,
+      role: "assistant",
+    })
+
+    const sourcesResult = await createSourcesAction(exaResponse.data?.results.map(result => ({
+      ...result,
+      chatId: currentChatId,
+    })) || [])
   }
 
   const handleKeyPress = (e: KeyboardEvent<HTMLInputElement>) => {
