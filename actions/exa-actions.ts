@@ -8,11 +8,13 @@ const exa = new Exa(process.env.EXA_API_KEY)
 export async function searchExaAction(userQuery: string): Promise<
     ActionState<
         {
-            title: string,
-            url: string,
-            text: string,
-            summary: string,
-        }[]
+            results: {
+                title: string,
+                url: string,
+                text: string,
+                summary: string,
+            }[]
+        }
     >
 > {
     try {
@@ -25,12 +27,14 @@ export async function searchExaAction(userQuery: string): Promise<
             summary: true,
         })
 
-        const formattedResults = exaResponse.results.map((r) => ({
-            title: r.title || "Untitled",
-            url: r.url || "No URL found",
-            text: r.text || "No text found",
-            summary: r.summary || "No summary found",
-        }))
+        const formattedResults = {
+            results: exaResponse.results.map((r) => ({
+              title: r.title || "",
+              url: r.url,
+              text: r.text,
+              summary: r.summary
+            }))
+          };
         
         return { 
             isSuccess: true,
