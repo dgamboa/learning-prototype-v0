@@ -18,7 +18,10 @@ export default function Sidebar({ initialChats, userId }: SidebarProps) {
     const pathname = usePathname()
 
     const handleNewSearch = async () => {
-        const result = await createChatAction(userId, "New Search")
+        const result = await createChatAction({
+            userId,
+            name: "New Search"
+        })
         if (result.isSuccess && result.data) {
             setChats([...chats, result.data])
         }

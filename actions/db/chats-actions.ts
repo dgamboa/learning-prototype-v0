@@ -6,10 +6,10 @@ import { ActionState } from "@/types"
 import { revalidatePath } from "next/cache"
 
 export async function createChatAction(
-  userId: string, name: string
+  data: InsertChat
 ): Promise<ActionState<SelectChat>> {
   try {
-    const newChat = await createChat({ userId, name })
+    const newChat = await createChat(data)
     revalidatePath("/")
     return {
       isSuccess: true,

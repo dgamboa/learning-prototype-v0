@@ -39,6 +39,7 @@ async function ChatAreaFetcher({ chatId, userId }: { chatId: string, userId: str
         initialMessages={messages || []} 
         initialSources={sources || []}
         userId={userId}
+        chatId={chatId}
       />
     </div>
   )

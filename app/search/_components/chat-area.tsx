@@ -1,28 +1,33 @@
 "use client"
 
-import { Input } from "@/components/ui/input"
-import { Search } from "lucide-react"
+import { SearchInput } from "@/app/search/_components/search-input"
+import { BookOpenCheck, Loader2 } from "lucide-react"
 import { SelectSource, SelectMessage } from "@/db/schema"
-import { useState, KeyboardEvent } from "react"
+import { useState, KeyboardEvent, useRef, useEffect } from "react"
 import { searchExaAction } from "@/actions/exa-actions"
 import { generateOpenAIResponseAction } from "@/actions/openai-actions"
 import { readStreamableValue } from "ai/rsc"
 import { createChatAction } from "@/actions/db/chats-actions"
 import { createMessageAction } from "@/actions/db/messages-actions"
 import { createSourcesAction } from "@/actions/db/sources-actions"
+import { useRouter } from "next/navigation"
+import { useSearchParams } from "next/navigation"
+import Markdown from "react-markdown"
 
 interface ChatAreaProps {
   className?: string
   initialSources?: SelectSource[]
   initialMessages?: SelectMessage[]
   userId: string
+  chatId: string
 }
 
 export default function ChatArea({
   className,
   initialSources,
   initialMessages,
-  userId
+  userId,
+  chatId
 }: ChatAreaProps) {
   const [messages, setMessages] = useState<SelectMessage[]>(initialMessages || [])
   const [sources, setSources] = useState<SelectSource[]>(initialSources || [])
@@ -30,10 +35,22 @@ export default function ChatArea({
   const [isGenerating, setIsGenerating] = useState(false)
   const [inputValue, setInputValue] = useState("")
 
+  const searchParams = useSearchParams()
+  const router = useRouter()
+  const searchInputRef = useRef<HTMLInputElement>(null)
+
+  useEffect(() => {
+    const isNewSearch = searchParams.get("new") === "true"
+    if (isNewSearch) {
+      setMessages([])
+      setSources([])
+      router.replace("/search", undefined)
+    }
+  }, [searchParams, router])
+
   const handleSearch = async (query: string) => {
     setIsSearching(true)
-    
-    let currentChatId = "temp-chat-id"
+
     let isNewChat = true
 
     const userMessageId = Date.now().toString()
@@ -45,7 +62,7 @@ export default function ChatArea({
         id: userMessageId,
         role: "user",
         content: query,
-        chatId: currentChatId,
+        chatId: chatId,
         createdAt: new Date(),
         updatedAt: new Date(),
       },
@@ -53,12 +70,12 @@ export default function ChatArea({
         id: assistantMessageId,
         role: "assistant",
         content: "Searching for information...",
-        chatId: currentChatId,
+        chatId: chatId,
         createdAt: new Date(),
         updatedAt: new Date()
       }
     ])
-    
+
     const exaResponse = await searchExaAction(query)
 
     if (!exaResponse.isSuccess || !exaResponse.data) {
@@ -72,7 +89,7 @@ export default function ChatArea({
     setSources(
       (exaResponse.data.results || []).map((result, i) => ({
         id: `${Date.now()}-${i}`,
-        chatId: currentChatId,
+        chatId: chatId,
         url: result.url,
         title: result.title,
         text: result.text,
@@ -81,7 +98,7 @@ export default function ChatArea({
         updatedAt: new Date()
       }))
     )
-    
+
     setIsSearching(false)
     setIsGenerating(true)
 
@@ -113,33 +130,52 @@ export default function ChatArea({
     }
 
     if (isNewChat) {
-      const newChat = await createChatAction(userId, query.slice(0,50))
-      if (newChat.isSuccess) {
-        currentChatId = newChat.data?.id || ""
+      const newChat = await createChatAction({
+        userId,
+        name: query.slice(0, 50)
+      })
+      if (newChat.isSuccess && newChat.data) {
+        chatId = newChat.data.id
         isNewChat = false
       } else {
         console.error("Error creating chat:", newChat.message)
         return
-      } 
+      }
     }
 
     const userMessageResult = await createMessageAction({
-      chatId: currentChatId,
+      chatId: chatId,
       content: query,
       role: "user",
     })
 
     const assistantMessageResult = await createMessageAction({
-      chatId: currentChatId,
+      chatId: chatId,
       content: fullContent,
       role: "assistant",
     })
 
     const sourcesResult = await createSourcesAction(exaResponse.data?.results.map(result => ({
       ...result,
-      chatId: currentChatId,
+      chatId: chatId,
     })) || [])
+
+    if (!sourcesResult.isSuccess) {
+      console.error("Failed to save sources:", sourcesResult.message)
+    }
+
+    if (!assistantMessageResult.isSuccess || !assistantMessageResult.data) {
+      console.error(
+        "Failed to create assistant message:",
+        assistantMessageResult.message
+      )
+    }
+
+    if (isNewChat) {
+      window.history.pushState(null, "", `/search/${chatId}`)
+    }
   }
+
 
   const handleKeyPress = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter" && inputValue.trim()) {
@@ -156,47 +192,71 @@ export default function ChatArea({
             <div className="text-lg font-medium text-muted-foreground">
               <h1 className="text-4xl font-bold text-center mb-4 text-white">Ask anything</h1>
             </div>
-            <div className="w-full max-w-md px-4">
+            <div className="w-full max-w-xl px-4">
               <div className="relative">
-                <Input
-                  placeholder="Search..."
-                  className="pr-10"
-                  value={inputValue}
-                  onChange={e => setInputValue(e.target.value)}
-                  onKeyPress={handleKeyPress}
+                <SearchInput
+                  ref={searchInputRef}
+                  onSearch={handleSearch}
+                  className="w-full"
                 />
-                <Search className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               </div>
             </div>
           </div>
         </div>
       ) : (
         <div className="flex flex-col gap-6 p-4 max-w-4xl mx-auto w-full">
-          {/* User Query */}
-          <div className="text-2xl font-black text-left font-extrabold">
-            {messages[0]?.content}
-          </div>
+          {[...messages].reverse().map(message => (
+            <div key={message.id}>
+              {message.role === "user" && (
+                <div className="text-2xl font-black text-left font-extrabold">
+                  {message.content}
+                </div>
+              )}
 
-          {/* Sources Grid */}
-          <div className="flex gap-4 justify-center">
-            {sources.map(source => (
-              <a 
-                key={source.id} 
-                href={source.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex flex-col justify-between w-[160px] h-[160px] p-4 border rounded-lg bg-zinc-800/50 hover:bg-zinc-700/50 transition-colors"
-              >
-                <div className="font-medium line-clamp-3">{source.title}</div>
-                <div className="text-sm text-muted-foreground truncate">{source.url}</div>
-              </a>
-            ))}
-          </div>
+              {message.role === "user" && (
+                <div className="overflow-x-auto pb-2">
+                  <div className="max-content mb-4 flex gap-4">
+                    {sources.map(source => (
+                      <a
+                        key={source.id}
+                        href={source.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex flex-col justify-between w-[160px] h-[160px] p-4 border rounded-lg bg-zinc-800/50 hover:bg-zinc-700/50 transition-colors"
+                      >
+                        <div className="font-medium line-clamp-3">{source.title}</div>
+                        <div className="text-sm text-muted-foreground truncate">{source.url}</div>
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              )}
 
-          {/* Assistant Response */}
-          <div className="prose prose-invert max-w-none text-left">
-            {messages[1]?.content}
-          </div>
+              {message.role === "assistant" && (
+                <div>
+                  <div className="mb-2 flex items-center gap-2">
+                    <BookOpenCheck className="size-5" />
+                    <div className="text-xl font-bold">Answer</div>
+                  </div>
+                  {isSearching ? (
+                    <div className="flex items-center gap-2">
+                      <Loader2 className="size-4 animate-spin" />
+                      <span>Searching for information...</span>
+                    </div>
+                  ) : isGenerating ? (
+                    <div className="flex items-center gap-2">
+                      <Loader2 className="size-4 animate-spin" />
+                      <span>Generating response...</span>
+                    </div>
+                  ) : (
+                    <>
+                      <Markdown>{message.content}</Markdown>
+                    </>
+                  )}
+                </div>
+              )}
+            </div>
+          ))}
         </div>
       )}
     </div>

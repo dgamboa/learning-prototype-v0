@@ -13,7 +13,7 @@ export default async function SearchPage() {
 
   return (
     <div className="h-full p-4">
-      <ChatArea initialSources={[]} initialMessages={[]} userId={userId} />
+      <ChatArea initialSources={[]} initialMessages={[]} userId={userId} chatId={""} />
     </div>
   )
 }
