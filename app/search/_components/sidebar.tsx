@@ -39,8 +39,8 @@ export default function Sidebar({ initialChats }: SidebarProps) {
     }
 
     return (
-        <div className="w-80 border-r border-muted/10 bg-muted/10 p-4">
-            <div className="mb-4">
+        <div className="w-80 border-r border-muted/10 bg-muted/10 flex flex-col h-full">
+            <div className="p-4">
                 <Button
                     onClick={handleNewSearch}
                     className="w-full"
@@ -50,27 +50,29 @@ export default function Sidebar({ initialChats }: SidebarProps) {
                 </Button>
             </div>
 
-            <h2 className="text-lg font-semibold">Library</h2>
-            {chats.map((chat) => (
-                <div 
-                    key={chat.id}
-                    className={`group mb-2 flex items-center justify-between rounded-lg p-2 hover:bg-muted/50 ${
-                        pathname === `/search/${chat.id}` ? "bg-muted/50" : ""
-                    }`}
-                >
-                    <Link href={`/search/${chat.id}`} className="flex-1">
-                        <span className="text-neutral-500">{chat.name}</span>
-                    </Link>
-                    <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-8 w-8 opacity-0 group-hover:opacity-100"
-                        onClick={() => handleDeleteChat(chat.id)}
+            <div className="flex-1 overflow-y-auto p-4">
+                <h2 className="text-lg font-semibold mb-2">Library</h2>
+                {chats.map((chat) => (
+                    <div 
+                        key={chat.id}
+                        className={`group mb-2 flex items-center justify-between rounded-lg p-2 hover:bg-muted/50 ${
+                            pathname === `/search/${chat.id}` ? "bg-muted/50" : ""
+                        }`}
                     >
-                        <Trash2 className="h-4 w-4 text-muted-foreground" />
-                    </Button>
-                </div>
-            ))}
+                        <Link href={`/search/${chat.id}`} className="flex-1">
+                            <span className="text-neutral-500">{chat.name}</span>
+                        </Link>
+                        <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8 opacity-0 group-hover:opacity-100"
+                            onClick={() => handleDeleteChat(chat.id)}
+                        >
+                            <Trash2 className="h-4 w-4 text-muted-foreground" />
+                        </Button>
+                    </div>
+                ))}
+            </div>
         </div>
     )
 } 
