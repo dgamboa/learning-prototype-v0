@@ -26,11 +26,9 @@ async function ChatAreaFetcher({ chatId, userId }: { chatId: string; userId: str
 export default async function ChatPage({
   params
 }: {
-  params: { chatId: string }
+  params: Promise<{ chatId: string }>
 }) {
-  const resolvedParams = await params
-  const chatId = resolvedParams.chatId
-  
+  const { chatId } = await params
   const { userId } = await auth()
   if (!userId) throw new Error("Not authenticated")
 
