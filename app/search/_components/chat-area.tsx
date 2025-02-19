@@ -177,6 +177,8 @@ export default function ChatArea({
         assistantMessageResult.message
       )
     }
+
+    router.push(`/search/${chatId}`, { scroll: false })
   }
 
   return (
