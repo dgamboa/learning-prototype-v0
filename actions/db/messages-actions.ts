@@ -22,18 +22,10 @@ export async function createMessageAction(
   }
 }
 
-export async function getMessagesByChatIdAction(
-  chatId: string
-): Promise<ActionState<SelectMessage[]>> {
-  try {
-    const messages = await getMessagesByChatId(chatId)
-    return {
-      isSuccess: true,
-      message: "Messages retrieved successfully",
-      data: messages
-    }
-  } catch (error) {
-    console.error("Error getting messages:", error)
-    return { isSuccess: false, message: "Failed to get messages" }
+export const getMessagesByChatIdAction = async (chatId: string) => {
+  const messages = await getMessagesByChatId(chatId)
+  return { 
+    isSuccess: true, 
+    data: messages?.sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime()) 
   }
 } 

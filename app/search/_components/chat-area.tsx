@@ -2,7 +2,7 @@
 
 import { SearchInput } from "@/app/search/_components/search-input"
 import { BookOpenCheck, Loader2 } from "lucide-react"
-import { SelectSource, SelectMessage } from "@/db/schema"
+import { SelectSource, SelectMessage, SelectChat } from "@/db/schema"
 import { useState, KeyboardEvent, useRef, useEffect } from "react"
 import { searchExaAction } from "@/actions/exa-actions"
 import { generateOpenAIResponseAction } from "@/actions/openai-actions"
@@ -20,6 +20,7 @@ interface ChatAreaProps {
   initialMessages?: SelectMessage[]
   userId: string
   chatId: string
+  onChatCreated?: (chat: SelectChat) => void
 }
 
 export default function ChatArea({
@@ -27,7 +28,8 @@ export default function ChatArea({
   initialSources,
   initialMessages,
   userId,
-  chatId
+  chatId,
+  onChatCreated
 }: ChatAreaProps) {
   const [messages, setMessages] = useState<SelectMessage[]>(initialMessages || [])
   const [sources, setSources] = useState<SelectSource[]>(initialSources || [])
@@ -56,24 +58,27 @@ export default function ChatArea({
     const userMessageId = Date.now().toString()
     const assistantMessageId = Date.now().toString() + 1
 
+    const userMessage: SelectMessage = {
+      id: userMessageId,
+      role: "user" as const,
+      content: query,
+      chatId: chatId,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    }
+    const assistantMessage: SelectMessage = {
+      id: assistantMessageId,
+      role: "assistant" as const,
+      content: "Searching for information...",
+      chatId: chatId,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    }
+
     setMessages(prev => [
       ...prev,
-      {
-        id: userMessageId,
-        role: "user",
-        content: query,
-        chatId: chatId,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      },
-      {
-        id: assistantMessageId,
-        role: "assistant",
-        content: "Searching for information...",
-        chatId: chatId,
-        createdAt: new Date(),
-        updatedAt: new Date()
-      }
+      userMessage,
+      assistantMessage
     ])
 
     const exaResponse = await searchExaAction(query)
@@ -83,8 +88,6 @@ export default function ChatArea({
       setIsSearching(false)
       return
     }
-
-    console.log("exaResponse", exaResponse.data)
 
     setSources(
       (exaResponse.data.results || []).map((result, i) => ({
@@ -170,10 +173,6 @@ export default function ChatArea({
         assistantMessageResult.message
       )
     }
-
-    if (isNewChat) {
-      window.history.pushState(null, "", `/search/${chatId}`)
-    }
   }
 
 
@@ -205,31 +204,31 @@ export default function ChatArea({
         </div>
       ) : (
         <div className="flex flex-col gap-6 p-4 max-w-4xl mx-auto w-full">
-          {[...messages].reverse().map(message => (
+          {messages.map(message => (
             <div key={message.id}>
               {message.role === "user" && (
-                <div className="text-2xl font-black text-left font-extrabold">
-                  {message.content}
-                </div>
-              )}
-
-              {message.role === "user" && (
-                <div className="overflow-x-auto pb-2">
-                  <div className="max-content mb-4 flex gap-4">
-                    {sources.map(source => (
-                      <a
-                        key={source.id}
-                        href={source.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex flex-col justify-between w-[160px] h-[160px] p-4 border rounded-lg bg-zinc-800/50 hover:bg-zinc-700/50 transition-colors"
-                      >
-                        <div className="font-medium line-clamp-3">{source.title}</div>
-                        <div className="text-sm text-muted-foreground truncate">{source.url}</div>
-                      </a>
-                    ))}
+                <>
+                  <div className="text-2xl font-black text-left font-extrabold">
+                    {message.content}
                   </div>
-                </div>
+
+                  <div className="overflow-x-auto pb-2 mt-4">
+                    <div className="max-content mb-4 flex gap-4">
+                      {sources.map(source => (
+                        <a
+                          key={source.id}
+                          href={source.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex flex-col justify-between w-[160px] h-[160px] p-4 border rounded-lg bg-zinc-800/50 hover:bg-zinc-700/50 transition-colors"
+                        >
+                          <div className="font-medium line-clamp-3">{source.title}</div>
+                          <div className="text-sm text-muted-foreground truncate">{source.url}</div>
+                        </a>
+                      ))}
+                    </div>
+                  </div>
+                </>
               )}
 
               {message.role === "assistant" && (

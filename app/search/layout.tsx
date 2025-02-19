@@ -35,7 +35,7 @@ export default async function SearchLayout({
         <SidebarFetcher userId={userId} />
       </Suspense>
 
-      <main className="flex-1 overflow-y-auto">
+      <main className="flex-1 overflow-y-auto bg-background">
         {children}
       </main>
     </div>

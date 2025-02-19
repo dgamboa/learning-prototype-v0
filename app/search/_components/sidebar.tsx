@@ -4,27 +4,27 @@ import { SelectChat } from "@/db/schema"
 import { createChatAction, deleteChatAction } from "@/actions/db/chats-actions"
 import { Button } from "@/components/ui/button"
 import { Plus, Trash2 } from "lucide-react"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Link from "next/link"
-import { usePathname } from "next/navigation"
+import { usePathname, useRouter } from "next/navigation"
 
 interface SidebarProps {
     initialChats: SelectChat[]
     userId: string
+    onChatsChange?: (chats: SelectChat[]) => void
 }
 
-export default function Sidebar({ initialChats, userId }: SidebarProps) {
+export default function Sidebar({ initialChats, userId, onChatsChange }: SidebarProps) {
     const [chats, setChats] = useState(initialChats)
     const pathname = usePathname()
+    const router = useRouter()
 
-    const handleNewSearch = async () => {
-        const result = await createChatAction({
-            userId,
-            name: "New Search"
-        })
-        if (result.isSuccess && result.data) {
-            setChats([...chats, result.data])
-        }
+    useEffect(() => {
+        setChats(initialChats)
+    }, [initialChats])
+
+    const handleNewSearch = () => {
+        router.push("/search")
     }
 
     const handleDeleteChat = async (chatId: string) => {
@@ -34,8 +34,14 @@ export default function Sidebar({ initialChats, userId }: SidebarProps) {
         }
     }
 
+    const addChat = (chat: SelectChat) => {
+        const newChats = [chat, ...chats]
+        setChats(newChats)
+        onChatsChange?.(newChats)
+    }
+
     return (
-        <div className="w-80 border-r bg-muted/10 p-4">
+        <div className="w-80 border-r border-muted/10 bg-muted/10 p-4">
             <div className="mb-4">
                 <Button
                     onClick={handleNewSearch}
