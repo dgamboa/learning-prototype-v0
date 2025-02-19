@@ -11,10 +11,9 @@ import { usePathname, useRouter } from "next/navigation"
 interface SidebarProps {
     initialChats: SelectChat[]
     userId: string
-    onChatsChange?: (chats: SelectChat[]) => void
 }
 
-export default function Sidebar({ initialChats, onChatsChange }: SidebarProps) {
+export default function Sidebar({ initialChats }: SidebarProps) {
     const [chats, setChats] = useState(initialChats)
     const pathname = usePathname()
     const router = useRouter()

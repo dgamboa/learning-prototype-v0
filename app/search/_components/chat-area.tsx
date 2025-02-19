@@ -2,8 +2,8 @@
 
 import { SearchInput } from "@/app/search/_components/search-input"
 import { BookOpenCheck, Loader2 } from "lucide-react"
-import { SelectSource, SelectMessage, SelectChat } from "@/db/schema"
-import { useState, KeyboardEvent, useRef, useEffect } from "react"
+import { SelectSource, SelectMessage } from "@/db/schema"
+import { useState, useRef, useEffect } from "react"
 import { searchExaAction } from "@/actions/exa-actions"
 import { generateOpenAIResponseAction } from "@/actions/openai-actions"
 import { readStreamableValue } from "ai/rsc"
@@ -33,7 +33,6 @@ export default function ChatArea({
   const [sources, setSources] = useState<SelectSource[]>(initialSources || [])
   const [isSearching, setIsSearching] = useState(false)
   const [isGenerating, setIsGenerating] = useState(false)
-  const [inputValue, setInputValue] = useState("")
 
   const searchParams = useSearchParams()
   const router = useRouter()
