@@ -20,7 +20,6 @@ interface ChatAreaProps {
   initialMessages?: SelectMessage[]
   userId: string
   chatId: string
-  onChatCreated?: (chat: SelectChat) => void
 }
 
 export default function ChatArea({
@@ -29,7 +28,6 @@ export default function ChatArea({
   initialMessages,
   userId,
   chatId,
-  onChatCreated
 }: ChatAreaProps) {
   const [messages, setMessages] = useState<SelectMessage[]>(initialMessages || [])
   const [sources, setSources] = useState<SelectSource[]>(initialSources || [])
@@ -167,19 +165,18 @@ export default function ChatArea({
       console.error("Failed to save sources:", sourcesResult.message)
     }
 
+    if (!userMessageResult.isSuccess || !userMessageResult.data) {
+      console.error(
+        "Failed to create user message:",
+        userMessageResult.message
+      )
+    }
+
     if (!assistantMessageResult.isSuccess || !assistantMessageResult.data) {
       console.error(
         "Failed to create assistant message:",
         assistantMessageResult.message
       )
-    }
-  }
-
-
-  const handleKeyPress = (e: KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter" && inputValue.trim()) {
-      handleSearch(inputValue.trim())
-      setInputValue("")
     }
   }
 

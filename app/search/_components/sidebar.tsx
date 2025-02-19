@@ -1,7 +1,7 @@
 "use client"
 
 import { SelectChat } from "@/db/schema"
-import { createChatAction, deleteChatAction } from "@/actions/db/chats-actions"
+import { deleteChatAction } from "@/actions/db/chats-actions"
 import { Button } from "@/components/ui/button"
 import { Plus, Trash2 } from "lucide-react"
 import { useState, useEffect } from "react"
@@ -14,7 +14,7 @@ interface SidebarProps {
     onChatsChange?: (chats: SelectChat[]) => void
 }
 
-export default function Sidebar({ initialChats, userId, onChatsChange }: SidebarProps) {
+export default function Sidebar({ initialChats, onChatsChange }: SidebarProps) {
     const [chats, setChats] = useState(initialChats)
     const pathname = usePathname()
     const router = useRouter()
@@ -32,12 +32,6 @@ export default function Sidebar({ initialChats, userId, onChatsChange }: Sidebar
         if (result.isSuccess) {
             setChats(chats.filter(chat => chat.id !== chatId))
         }
-    }
-
-    const addChat = (chat: SelectChat) => {
-        const newChats = [chat, ...chats]
-        setChats(newChats)
-        onChatsChange?.(newChats)
     }
 
     return (
