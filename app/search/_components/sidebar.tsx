@@ -30,6 +30,11 @@ export default function Sidebar({ initialChats }: SidebarProps) {
         const result = await deleteChatAction(chatId)
         if (result.isSuccess) {
             setChats(chats.filter(chat => chat.id !== chatId))
+            
+            // If we're currently on the chat that was deleted, redirect to /search
+            if (pathname === `/search/${chatId}`) {
+                router.push("/search")
+            }
         }
     }
 
